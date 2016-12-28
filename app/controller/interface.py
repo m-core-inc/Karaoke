@@ -1,5 +1,5 @@
 from sys import exit
-from app.controller.player import Player
+from app.model.player import Player
 from app.model.songDB import songDB
 
 
