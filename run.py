@@ -1,4 +1,4 @@
-from app.controllers.interface import Interface
+from app.controllers.main_controller import MainController
 
-start = Interface()
+start = MainController()
 start.main()

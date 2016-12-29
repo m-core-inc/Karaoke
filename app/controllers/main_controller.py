@@ -3,7 +3,7 @@ from app.models.player import Player
 from app.songDB import songDB
 
 
-class Interface:
+class MainController:
 
     def __init__(self):
         self.starter = Player()  # a var that sets up the player class for later use.
