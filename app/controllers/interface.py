@@ -1,6 +1,6 @@
 from sys import exit
-from app.model.player import Player
-from app.model.songDB import songDB
+from app.models.player import Player
+from app.songDB import songDB
 
 
 class Interface:
