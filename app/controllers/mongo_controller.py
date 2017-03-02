@@ -24,7 +24,7 @@ class MongoController(MongoClient):
 
     def get_song(self, title, artist):
 
-        space = []
+        return self.songsCollections.find_one({self.CONST_PROPERTY_TITLE: title, self.CONST_PROPERTY_ARTIST: artist})
 
     def insert_song(self, title, artist, youtube):
 
@@ -33,8 +33,7 @@ class MongoController(MongoClient):
                 self.CONST_PROPERTY_YOUTUBE: youtube}
 
         return self.songsCollections.update({self.CONST_PROPERTY_TITLE: title, self.CONST_PROPERTY_ARTIST: artist},
-                                     song,
-                                     True)
+                                            song, True)
 
     def insert_song_obj(self, song):
 
@@ -46,7 +45,7 @@ class MongoController(MongoClient):
 
     def remove_song(self, title, artist):
 
-        song = {}
+        return self.songsCollections.remove({self.CONST_PROPERTY_TITLE: title, self.CONST_PROPERTY_ARTIST: artist}, True)
 
 
 mongo = MongoController("localhost", "27017", "admin", "pa55word")
@@ -56,3 +55,7 @@ mongo.insert_song("Safe and sound", "Capital Cites", "http://www.youtube.com/wat
 song = Song("In The End", "Linkin Park", "www.youtube.com/watch?v=eVTXPUF4Oz4")
 
 mongo.insert_song_obj(song)
+
+print(mongo.get_song("Safe and sound", "Capital Cites"))
+
+print(mongo.remove_song("In The End", "Linkin Park"))
