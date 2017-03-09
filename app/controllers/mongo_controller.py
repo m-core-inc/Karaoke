@@ -1,4 +1,4 @@
-from pymongo import MongoClient, errors, TEXT
+from pymongo import MongoClient, errors
 from app.models.song import Song
 
 
@@ -17,11 +17,17 @@ class MongoController(MongoClient):
         self.dbPort = db_port
         self.dbUsername = db_username
         self.dbPassword = db_password
-        connection_string = "mongodb://{0}:{1}@{2}:{3}".format(db_username, db_password, db_host, db_port)
-        self.client = MongoClient(connection_string)[self.CONST_DB_NAME]
-        self.songsCollections = self.client.songs
-        self.songsCollections.create_index([(self.CONST_PROPERTY_TITLE, 1),
-                                           (self.CONST_PROPERTY_ARTIST, 1)], default_language='english')
+
+        try:
+            connection_string = "mongodb://{0}:{1}@{2}:{3}".format(db_username, db_password, db_host, db_port)
+            self.client = MongoClient(connection_string)[self.CONST_DB_NAME]
+            self.songsCollections = self.client.songs
+            self.songsCollections.create_index([(self.CONST_PROPERTY_TITLE, 1),
+                                                (self.CONST_PROPERTY_ARTIST, 1)], default_language='english')
+
+        except errors.ServerSelectionTimeoutError as e:
+            print("Error connecting to mongo")
+            print(e)
 
     def get_all_songs(self):
 
