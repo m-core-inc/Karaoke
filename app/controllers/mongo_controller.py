@@ -11,20 +11,29 @@ class MongoController(MongoClient):
     CONST_PROPERTY_ARTIST = "artist"
     CONST_PROPERTY_YOUTUBE = "youtube"
 
-    def __init__(self, dbHost, dbPort, dbUsername, dbPassword):
-        self.dbHost = dbHost
-        self.dbPort = dbPort
-        self.dbUsername = dbUsername
-        self.dbPassword = dbPassword
-        connectionString = "mongodb://{0}:{1}@{2}:{3}".format(dbUsername, dbPassword, dbHost, dbPort)
-        self.client = MongoClient(connectionString)[self.CONST_DB_NAME]
+    def __init__(self, db_host, db_port, db_username, db_password):
+        super().__init__()
+        self.dbHost = db_host
+        self.dbPort = db_port
+        self.dbUsername = db_username
+        self.dbPassword = db_password
+        connection_string = "mongodb://{0}:{1}@{2}:{3}".format(db_username, db_password, db_host, db_port)
+        self.client = MongoClient(connection_string)[self.CONST_DB_NAME]
         self.songsCollections = self.client.songs
         self.songsCollections.create_index([(self.CONST_PROPERTY_TITLE, 1),
                                            (self.CONST_PROPERTY_ARTIST, 1)], default_language='english')
 
     def get_all_songs(self):
 
-        return self.songsCollections.find()[:50]
+        songs = self.songsCollections.find()[:50]
+        song_list = []
+
+        for item in songs:
+            convert = Song(item[self.CONST_PROPERTY_TITLE], item[self.CONST_PROPERTY_ARTIST],
+                           item[self.CONST_PROPERTY_YOUTUBE])
+            song_list.append(convert)
+
+        return song_list
 
     def get_song(self, title, artist):
 
@@ -51,26 +60,3 @@ class MongoController(MongoClient):
 
         return self.songsCollections.remove({self.CONST_PROPERTY_TITLE: title, self.CONST_PROPERTY_ARTIST: artist},
                                             True)
-
-song = Song("Safe and Sound", "Capital Cites", "www.youtube.com/watch?v=47dtFZ8CFo8")
-song2 = Song("In The End", "Linkin Park", "www.youtube.com/watch?v=eVTXPUF4Oz4")
-song3 = Song("Beautiful Now", "Zedd", "www.youtube.com/watch?v=n1a7o44WxNo")
-song4 = Song("Clocks", "Cold Play", "www.youtube.com/watch?v=d020hcWA_Wg")
-song5 = Song("Best Day Of My Life", "American Authors", "www.youtube.com/watch?v=Y66j_BUCBMY")
-
-mongo = MongoController("localhost", "27017", "admin", "pa55word")
-
-mongo.insert_song_obj(song)
-mongo.insert_song_obj(song2)
-mongo.insert_song_obj(song3)
-mongo.insert_song_obj(song4)
-mongo.insert_song_obj(song5)
-
-# print(mongo.get_song("Safe and sound", "Capital Cites"))
-
-# print(mongo.remove_song("In The End", "Linkin Park"))
-
-stored = mongo.get_all_songs()
-
-for item in stored:
-    print(item)
